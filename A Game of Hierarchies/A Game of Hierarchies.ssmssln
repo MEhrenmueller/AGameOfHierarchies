@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# SQL Server Management Studio Solution File, Format Version 12.00
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "A Game of Hierarchies", "A Game of Hierarchies\A Game of Hierarchies.ssmssqlproj", "{FBBD81B9-1856-43FC-B033-F25E26A90E59}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Default = Default|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBBD81B9-1856-43FC-B033-F25E26A90E59}.Default|Default.ActiveCfg = Default
+		{E93099B0-6E79-4DEE-A21E-C7CB308917E2}.Default|Default.ActiveCfg = Default
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

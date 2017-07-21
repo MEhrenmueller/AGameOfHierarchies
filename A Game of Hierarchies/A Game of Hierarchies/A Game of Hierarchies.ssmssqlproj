@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="A Game of Hierarchies">
+  <Items>
+    <LogicalFolder Name="Connections" Type="2" Sorted="true">
+      <Items />
+    </LogicalFolder>
+    <LogicalFolder Name="Queries" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="010 Prepare POI.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>010 Prepare POI.sql</FullPath>
+        </FileNode>
+        <FileNode Name="011 Prepare POI.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>011 Prepare POI.sql</FullPath>
+        </FileNode>
+        <FileNode Name="019 Add POI.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>019 Add POI.sql</FullPath>
+        </FileNode>
+        <FileNode Name="021 Prepare Route.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>021 Prepare Route.sql</FullPath>
+        </FileNode>
+        <FileNode Name="029 AddRoute.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>029 AddRoute.sql</FullPath>
+        </FileNode>
+        <FileNode Name="030 Prepare Family.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>030 Prepare Family.sql</FullPath>
+        </FileNode>
+        <FileNode Name="031 Prepare Family.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>031 Prepare Family.sql</FullPath>
+        </FileNode>
+        <FileNode Name="032 Prepare FamilyGraph.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>032 Prepare FamilyGraph.sql</FullPath>
+        </FileNode>
+        <FileNode Name="032old Prepare FamilyGraph.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>032old Prepare FamilyGraph.sql</FullPath>
+        </FileNode>
+        <FileNode Name="039 AddFamily.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>039 AddFamily.sql</FullPath>
+        </FileNode>
+        <FileNode Name="041 Prepare Recipe.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>041 Prepare Recipe.sql</FullPath>
+        </FileNode>
+        <FileNode Name="049 AddRecipe.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>049 AddRecipe.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
