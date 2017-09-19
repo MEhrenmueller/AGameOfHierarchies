@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use [GoT]
+use [AGameOfHierarchies]
 go
 
 -- Make it easier to insert rows in any order
@@ -33,6 +33,8 @@ ALTER TABLE dbo.Family
 ALTER TABLE dbo.Family
   DROP CONSTRAINT IF EXISTS FK_Family_Mother;
 
+select * from dbo.Family
+select * from dbo.isFather
 
 -- STARK
 exec dbo.AddFamily

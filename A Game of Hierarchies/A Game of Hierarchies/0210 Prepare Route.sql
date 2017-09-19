@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-USE [GoT]
+USE [AGameOfHierarchies]
 GO
 
 DROP TABLE IF EXISTS dbo.[Route];
@@ -53,8 +53,8 @@ DECLARE
   @ToNodeID	AS nvarchar(255);
 
 
-SET @FromNodeID	  = (SELECT $node_id FROM dbo.POI WITH (UPDLOCK) WHERE POIName = @From);
-SET @ToNodeID = (SELECT $node_id FROM dbo.POI WITH (UPDLOCK) WHERE POIName = @To);
+SET @FromNodeID	= (SELECT $node_id FROM dbo.POI WITH (UPDLOCK) WHERE POIName = @From);
+SET @ToNodeID	= (SELECT $node_id FROM dbo.POI WITH (UPDLOCK) WHERE POIName = @To);
 
 If @FromNodeID is null
 begin

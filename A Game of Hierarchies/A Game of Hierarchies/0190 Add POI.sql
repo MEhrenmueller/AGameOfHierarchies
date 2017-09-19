@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use GoT;
+use AGameOfHierarchies;
 GO
 
 exec dbo.AddPOI 'Winterfell', 'The North', 'Westeros', 'The Known World'

@@ -1,5 +1,5 @@
 /* A Game of Hierarchies
- * Prepare POI - SQL Server 2017+
+ * Prepare POI - Pre-SQL Server 2017
  */
 
 /*
@@ -27,42 +27,41 @@ SOFTWARE.
 use master
 go
 
---CREATE DATABASE [GoT]
+--DROP DATABASE [AGameOfHierarchies]
+--CREATE DATABASE [AGameOfHierarchies]
 GO
 
-USE [GoT]
+USE [AGameOfHierarchies]
 GO
 
-DROP TABLE IF EXISTS dbo.POI;
-DROP TABLE IF EXISTS dbo.Region;
-DROP TABLE IF EXISTS dbo.Continent;
-DROP TABLE IF EXISTS dbo.World;
+IF OBJECT_ID(N'dbo.POI', N'U') IS NOT NULL DROP TABLE dbo.POI;
+IF OBJECT_ID(N'dbo.Region', N'U') IS NOT NULL DROP TABLE dbo.Region;
+IF OBJECT_ID(N'dbo.Continent', N'U') IS NOT NULL DROP TABLE dbo.Continent;
+IF OBJECT_ID(N'dbo.World', N'U') IS NOT NULL DROP TABLE dbo.World;
 GO
-
 CREATE TABLE dbo.World (
-ID				int NOT NULL identity(1,1),
-WorldName		nvarchar(50)
-);
+	ID				int NOT NULL identity(1,1),
+	WorldName		nvarchar(50)
+)
 ALTER TABLE dbo.World ADD CONSTRAINT PK_World PRIMARY KEY NONCLUSTERED(ID);
 
 GO
 CREATE TABLE dbo.Continent (
-ID				int NOT NULL identity(1,1),
-ContinentName	nvarchar(50),
-WorldID			int
-);
+	ID				int NOT NULL identity(1,1),
+	ContinentName	nvarchar(50),
+	WorldID			int
+)
 ALTER TABLE dbo.Continent ADD CONSTRAINT PK_Continent PRIMARY KEY NONCLUSTERED(ID);
-
 ALTER TABLE dbo.Continent
-  ADD CONSTRAINT FK_Continent_World
-    FOREIGN KEY(WorldID) REFERENCES dbo.World(ID);
+	ADD CONSTRAINT FK_Continent_World
+		FOREIGN KEY(WorldID) REFERENCES dbo.World(ID);
 
 GO
 CREATE TABLE dbo.Region (
-ID				int NOT NULL identity(1,1),
-RegionName		nvarchar(50),
-ContinentID		int
-);
+	ID				int NOT NULL identity(1,1),
+	RegionName		nvarchar(50),
+	ContinentID		int
+)
 ALTER TABLE dbo.Region ADD CONSTRAINT PK_Region PRIMARY KEY NONCLUSTERED(ID);
 ALTER TABLE dbo.Region
   ADD CONSTRAINT FK_Region_Continent
@@ -70,29 +69,28 @@ ALTER TABLE dbo.Region
 
 GO
 CREATE TABLE dbo.POI (
-ID				int NOT NULL identity(1,1),
-POIName			nvarchar(50),
-RegionName		nvarchar(50),
-ContinentName	nvarchar(50),
-WorldName		nvarchar(50),
-RegionID		int,
-ContinentID		int,
-WorldID			int
+	ID				int NOT NULL identity(1,1),
+	POIName			nvarchar(50),
+	RegionName		nvarchar(50),
+	ContinentName	nvarchar(50),
+	WorldName		nvarchar(50),
+	RegionID		int,
+	ContinentID		int,
+	WorldID			int
 )
-AS NODE;
-
 ALTER TABLE dbo.POI ADD CONSTRAINT PK_POI PRIMARY KEY NONCLUSTERED(ID);
 ALTER TABLE dbo.POI
-  ADD CONSTRAINT FK_POI_Region
-    FOREIGN KEY(RegionID) REFERENCES dbo.Region(ID);
+	ADD CONSTRAINT FK_POI_Region
+		FOREIGN KEY(RegionID) REFERENCES dbo.Region(ID);
 ALTER TABLE dbo.POI
-  ADD CONSTRAINT FK_POI_Continent
-    FOREIGN KEY(ContinentID) REFERENCES dbo.Continent(ID);
+	ADD CONSTRAINT FK_POI_Continent
+		FOREIGN KEY(ContinentID) REFERENCES dbo.Continent(ID);
 ALTER TABLE dbo.POI
-  ADD CONSTRAINT FK_POI_World
-    FOREIGN KEY(WorldID) REFERENCES dbo.World(ID);
+	ADD CONSTRAINT FK_POI_World
+		FOREIGN KEY(WorldID) REFERENCES dbo.World(ID);
 
 GO
+
 CREATE OR ALTER PROCEDURE dbo.AddPOI (
 	@POIName		nvarchar(50), 
 	@RegionName		nvarchar(50), 
@@ -108,6 +106,7 @@ DECLARE
 	@ContinentID	int, 
 	@WorldID		int
 
+--Normalized
 IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.World WHERE [WorldName]=@WorldName)
 	INSERT INTO dbo.World (WorldName)
 	VALUES	(@WorldName)
@@ -123,6 +122,7 @@ IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Region WHERE RegionName=@RegionName)
 	VALUES	(@RegionName, @ContinentID)
 SELECT @RegionID = ID FROM dbo.Region WHERE RegionName=@RegionName;
 
+--Normalized & Denormalized
 IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.POI WHERE POIName=@POIName)
 	INSERT INTO dbo.POI (POIName, RegionName, ContinentName, WorldName, RegionID, ContinentID, WorldID)
 	VALUES	(@POIName, @RegionName, @ContinentName, @WorldName, @RegionID, @ContinentID, @WorldID)

@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use [GoT]
+use [AGameOfHierarchies]
 go
 
 DROP PROC IF EXISTS dbo.AddFamilyEdge;
@@ -150,43 +150,43 @@ IF @FatherNodeID IS NOT NULL
 IF @MotherNodeID IS NOT NULL
 	INSERT INTO dbo.IsMother VALUES(@MotherNodeID, @ChildNodeID)
 
---Graph
-IF @FatherID IS NULL
-BEGIN
-  SET @FathersNodeID = NULL;
-END
-ELSE
-BEGIN
-  SET @FathersNodeID = (SELECT $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FatherID);
-END
+----Graph
+--IF @FatherID IS NULL
+--BEGIN
+--  SET @FathersNodeID = NULL;
+--END
+--ELSE
+--BEGIN
+--  SET @FathersNodeID = (SELECT $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FatherID);
+--END
 
-IF @MotherID IS NULL
-BEGIN
-  SET @MothersNodeID = NULL;
-END
-ELSE
-BEGIN
-  SET @MothersNodeID = (SELECT $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @MotherID);
-END
--- Insert new child
-IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Family WHERE ID=@ID)
-	INSERT INTO dbo.Family(ID, FirstName, LastName, Titles, Sex)
-	VALUES(@ID, @Firstname, @LastName, @Titles, @Sex);
-SET @MyNodeID = (SELECT $node_id FROM dbo.Family WHERE ID=@ID);
---print 'MyNodeID'
---print @MyNodeID
-IF @FathersNodeID IS NOT NULL
-BEGIN
-  --print '@FathersNodeID'
-  --print @FathersNodeID
-  INSERT INTO dbo.isFather ($from_id, $to_id) VALUES(@FathersNodeID, @MyNodeID)
-END
-IF @MothersNodeID IS NOT NULL
-BEGIN
-  --print '@MothersNodeID'
-  --print @MothersNodeID
-  INSERT INTO dbo.isMother ($from_id, $to_id) VALUES(@MothersNodeID, @MyNodeID)
-END
+--IF @MotherID IS NULL
+--BEGIN
+--  SET @MothersNodeID = NULL;
+--END
+--ELSE
+--BEGIN
+--  SET @MothersNodeID = (SELECT $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @MotherID);
+--END
+---- Insert new child
+--IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Family WHERE ID=@ID)
+--	INSERT INTO dbo.Family(ID, FirstName, LastName, Titles, Sex)
+--	VALUES(@ID, @Firstname, @LastName, @Titles, @Sex);
+--SET @MyNodeID = (SELECT $node_id FROM dbo.Family WHERE ID=@ID);
+----print 'MyNodeID'
+----print @MyNodeID
+--IF @FathersNodeID IS NOT NULL
+--BEGIN
+--  --print '@FathersNodeID'
+--  --print @FathersNodeID
+--  INSERT INTO dbo.isFather ($from_id, $to_id) VALUES(@FathersNodeID, @MyNodeID)
+--END
+--IF @MothersNodeID IS NOT NULL
+--BEGIN
+--  --print '@MothersNodeID'
+--  --print @MothersNodeID
+--  INSERT INTO dbo.isMother ($from_id, $to_id) VALUES(@MothersNodeID, @MyNodeID)
+--END
 
 --exec dbo.AddFamilyEdge @FatherID, 'isFather', @ID
 --exec dbo.AddFamilyEdge @MotherID, 'isMother', @ID

@@ -6,77 +6,71 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
-        <FileNode Name="010 Prepare POI.sql">
+        <FileNode Name="0100 Prepare POI.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>010 Prepare POI.sql</FullPath>
+          <FullPath>0100 Prepare POI.sql</FullPath>
         </FileNode>
-        <FileNode Name="011 Prepare POI.sql">
+        <FileNode Name="0110 Prepare POI.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>011 Prepare POI.sql</FullPath>
+          <FullPath>0110 Prepare POI.sql</FullPath>
         </FileNode>
-        <FileNode Name="019 Add POI.sql">
+        <FileNode Name="0190 Add POI.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>019 Add POI.sql</FullPath>
+          <FullPath>0190 Add POI.sql</FullPath>
         </FileNode>
-        <FileNode Name="021 Prepare Route.sql">
+        <FileNode Name="0210 Prepare Route.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>021 Prepare Route.sql</FullPath>
+          <FullPath>0210 Prepare Route.sql</FullPath>
         </FileNode>
-        <FileNode Name="029 AddRoute.sql">
+        <FileNode Name="0290 AddRoute.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>029 AddRoute.sql</FullPath>
+          <FullPath>0290 AddRoute.sql</FullPath>
         </FileNode>
-        <FileNode Name="030 Prepare Family.sql">
+        <FileNode Name="0300 Prepare Family.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>030 Prepare Family.sql</FullPath>
+          <FullPath>0300 Prepare Family.sql</FullPath>
         </FileNode>
-        <FileNode Name="031 Prepare Family.sql">
+        <FileNode Name="0310 Prepare Family.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>031 Prepare Family.sql</FullPath>
+          <FullPath>0310 Prepare Family.sql</FullPath>
         </FileNode>
-        <FileNode Name="032 Prepare FamilyGraph.sql">
+        <FileNode Name="0320 Prepare FamilyGraph.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>032 Prepare FamilyGraph.sql</FullPath>
+          <FullPath>0320 Prepare FamilyGraph.sql</FullPath>
         </FileNode>
-        <FileNode Name="032old Prepare FamilyGraph.sql">
+        <FileNode Name="0390 AddFamily.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>032old Prepare FamilyGraph.sql</FullPath>
+          <FullPath>0390 AddFamily.sql</FullPath>
         </FileNode>
-        <FileNode Name="039 AddFamily.sql">
+        <FileNode Name="0410 Prepare Recipe.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>039 AddFamily.sql</FullPath>
+          <FullPath>0410 Prepare Recipe.sql</FullPath>
         </FileNode>
-        <FileNode Name="041 Prepare Recipe.sql">
+        <FileNode Name="0490 AddRecipe.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />
           <AssociatedConnUserName />
-          <FullPath>041 Prepare Recipe.sql</FullPath>
-        </FileNode>
-        <FileNode Name="049 AddRecipe.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
-          <FullPath>049 AddRecipe.sql</FullPath>
+          <FullPath>0490 AddRecipe.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>
