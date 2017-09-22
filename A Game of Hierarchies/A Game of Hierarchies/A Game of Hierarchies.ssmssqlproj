@@ -6,6 +6,12 @@
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
+        <FileNode Name="0000 CREATE DATABASE.sql">
+          <AssociatedConnectionMoniker />
+          <AssociatedConnSrvName />
+          <AssociatedConnUserName />
+          <FullPath>0000 CREATE DATABASE.sql</FullPath>
+        </FileNode>
         <FileNode Name="0100 Prepare POI.sql">
           <AssociatedConnectionMoniker />
           <AssociatedConnSrvName />

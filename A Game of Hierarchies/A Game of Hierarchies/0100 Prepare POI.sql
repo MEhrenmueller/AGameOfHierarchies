@@ -24,13 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use master
-go
-
---DROP DATABASE [AGameOfHierarchies]
---CREATE DATABASE [AGameOfHierarchies]
-GO
-
 USE [AGameOfHierarchies]
 GO
 
