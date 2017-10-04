@@ -27,37 +27,37 @@ SOFTWARE.
 use [AGameOfHierarchies]
 go
 
-DROP PROC IF EXISTS dbo.AddFamilyEdge;
-GO
-CREATE PROC dbo.AddFamilyEdge
-	@FromID				int,
-	@FamilyRelationShip	nvarchar(50),
-	@ToID				int
-AS
-
-SET NOCOUNT ON;
-
-DECLARE
-	@FromNodeID			AS VARCHAR(1000),
-	@ToNodeID			AS VARCHAR(1000);
-
-
-SELECT @FromNodeID = $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FromID;
-SELECT @ToNodeID = $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @ToID;
-
-IF @FromNodeID IS NULL
-	RETURN
-IF @ToNodeID IS NULL
-	RETURN
-
-INSERT INTO dbo.FamilyEdge (FamilyRelationShip, $from_id, $to_id) VALUES(@FamilyRelationShip, @FromNodeID, @ToNodeID)
-
-GO
-
 DROP TABLE IF EXISTS dbo.FamilyEdge;
-CREATE TABLE dbo.FamilyEdge (
-	FamilyRelationShip	nvarchar(50)
-) AS EDGE;
+--CREATE TABLE dbo.FamilyEdge (
+--	FamilyRelationShip	nvarchar(50)
+--) AS EDGE;
+
+DROP PROC IF EXISTS dbo.AddFamilyEdge;
+--GO
+--CREATE PROC dbo.AddFamilyEdge
+--	@FromID				int,
+--	@FamilyRelationShip	nvarchar(50),
+--	@ToID				int
+--AS
+
+--SET NOCOUNT ON;
+
+--DECLARE
+--	@FromNodeID			AS VARCHAR(1000),
+--	@ToNodeID			AS VARCHAR(1000);
+
+
+--SELECT @FromNodeID = $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FromID;
+--SELECT @ToNodeID = $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @ToID;
+
+--IF @FromNodeID IS NULL
+--	RETURN
+--IF @ToNodeID IS NULL
+--	RETURN
+
+--INSERT INTO dbo.FamilyEdge (FamilyRelationShip, $from_id, $to_id) VALUES(@FamilyRelationShip, @FromNodeID, @ToNodeID)
+
+--GO
 
 DROP PROC IF EXISTS dbo.AddFamily;
 GO

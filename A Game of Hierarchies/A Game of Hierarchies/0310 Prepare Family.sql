@@ -58,8 +58,11 @@ ALTER TABLE dbo.Family
 
 DROP TABLE IF EXISTS dbo.IsFather;
 CREATE TABLE dbo.IsFather AS EDGE;
+CREATE INDEX IX_IsFather_$from_node ON dbo.IsFather ($from_id);
+
 DROP TABLE IF EXISTS dbo.IsMother;
 CREATE TABLE IsMother AS EDGE;
+CREATE INDEX IX_IsMother_$from_node ON dbo.IsMother ($from_id);
 
 DROP PROC IF EXISTS dbo.AddFamily;
 GO
