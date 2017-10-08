@@ -30,39 +30,54 @@ go
 DROP TABLE IF EXISTS dbo.Family;
 GO
 CREATE TABLE dbo.Family (
+	--PK
 	ID			int NOT NULL,
+	--Attributes
 	FirstName	varchar(50),
 	LastName	varchar(50),
 	Titles		varchar(255),
 	Sex			char(1),
+	--self-join
 	FatherID	int,
 	MotherID	int,
+	--materialized path
 	FatherLvl	int,
 	MotherLvl	int,
 	FatherPath	varchar(255),
 	MotherPath	varchar(255),
+	--hierarchyid
 	FatherHID	hierarchyid,
 	MotherHID	hierarchyid,
+	--CHECK
 	CHECK (ID <> FatherID), --no one can be his own father
 	CHECK (ID <> MotherID)  --no one can be his own mother
+	--,CHECK((SELECT COUNT(*) FROM dbo.Family)-1 =(SELECT COUNT(FatherID) FROM dbo.Family)
+	--,CHECK(SELECT(COUNT(*) FROM dbo.Family WHERE FatherID IS NULL) = 1)
 ) AS NODE;
 GO
---depth-first & breadth-first indexes
-CREATE UNIQUE CLUSTERED INDEX idx_Family_depth_first_Father ON dbo.Family(FatherPath);
+--primary key
+ALTER TABLE dbo.Family ADD CONSTRAINT PK_Family PRIMARY KEY NONCLUSTERED(ID);
+--self-join
+CREATE UNIQUE INDEX idx_Family_FatherID_ID ON dbo.Family(FatherID, ID);
+CREATE UNIQUE INDEX idx_Family_MotherID_ID ON dbo.Family(MotherID, ID);
+--materialized path
+CREATE UNIQUE INDEX idx_Family_depth_first_Father ON dbo.Family(FatherPath);
 CREATE UNIQUE INDEX idx_Family_depth_first_Mother ON dbo.Family(MotherPath);
 CREATE UNIQUE INDEX idx_Family_breadth_first_Father ON dbo.Family(FatherLvl, FatherPath);
 CREATE UNIQUE INDEX idx_Family_breadth_first_Mother ON dbo.Family(MotherLvl, MotherPath);
-ALTER TABLE dbo.Family 
-	ADD CONSTRAINT PK_Family 
-		PRIMARY KEY NONCLUSTERED(ID);
+--hierarchyid
+CREATE UNIQUE INDEX idx_Family_FatherHID ON dbo.Family(FatherHID);
+CREATE UNIQUE INDEX idx_Family_MotherHID ON dbo.Family(MotherHID);
+
 
 DROP TABLE IF EXISTS dbo.IsFather;
 CREATE TABLE dbo.IsFather AS EDGE;
-CREATE INDEX IX_IsFather_$from_node ON dbo.IsFather ($from_id);
+CREATE INDEX IX_IsFather_$from_id_$to_id ON dbo.IsFather ($from_id, $to_id);
 
 DROP TABLE IF EXISTS dbo.IsMother;
 CREATE TABLE IsMother AS EDGE;
-CREATE INDEX IX_IsMother_$from_node ON dbo.IsMother ($from_id);
+CREATE INDEX IX_IsMother_$from_node_$to_id ON dbo.IsMother ($from_id, $to_id);
+
 
 DROP PROC IF EXISTS dbo.AddFamily;
 GO
@@ -79,118 +94,72 @@ AS
 SET NOCOUNT ON;
 
 DECLARE
+	--materialized path
 	@FatherPath			varchar(255),
 	@MotherPath			varchar(255),
-	@FatherHID			AS HIERARCHYID,
-	@MotherHID			AS HIERARCHYID,
-	@FathersHID			AS HIERARCHYID,
-	@MothersHID			AS HIERARCHYID,
+	--hierarchyid
+	@FatherHID			AS HIERARCHYID, --HID of actual node in Father Hierarchy
+	@MotherHID			AS HIERARCHYID, --HID of actual node in Mother Hierarchy
+	@FathersHID			AS HIERARCHYID, --HID of Father
+	@MothersHID			AS HIERARCHYID, --HID of Mother
 	@FathersLastChildHID	AS HIERARCHYID,
 	@MothersLastChildHID	AS HIERARCHYID,
-	@ChildNodeID			AS VARCHAR(1000),
+	--graph
+	@NodeID				AS VARCHAR(1000),
 	@FatherNodeID			AS VARCHAR(1000),
 	@MotherNodeID			AS VARCHAR(1000),
-	@MyNodeID			AS varchar(1000),
-	@FathersNodeID	AS varchar(1000),
-	@MothersNodeID	AS varchar(1000);
+	@MyNodeID			AS varchar(1000);
 
 BEGIN TRAN;
-
 IF @FatherID IS NULL
 BEGIN
-  SET @FatherPath = '.' + CAST(@ID AS VARCHAR(10)) + '.';
-  SET @FatherHID = hierarchyid::GetRoot().GetDescendant((select MAX(FatherHID) from dbo.Family where FatherHID.GetAncestor(1) = hierarchyid::GetRoot()), NULL);
+	SET @FatherPath = '.' + CAST(@ID AS VARCHAR(10)) + '.';
+	SET @FatherHID = hierarchyid::GetRoot().GetDescendant((select MAX(FatherHID) from dbo.Family where FatherHID.GetAncestor(1) = hierarchyid::GetRoot()), NULL);
 END
 ELSE
 BEGIN
-  SET @FathersHID = (SELECT FatherHID FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FatherID);
-  SET @FathersLastChildHID = (SELECT MAX(FatherHID) FROM dbo.Family WHERE FatherHID.GetAncestor(1) = @FathersHID);
-  SET @FatherHID = @FathersHID.GetDescendant(@FathersLastChildHID, NULL);
-  SET @FatherNodeID = (SELECT $node_id FROM dbo.Family WHERE ID = @FatherID);
+	SET @FathersHID = (SELECT FatherHID FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FatherID);
+	SET @FathersLastChildHID = (SELECT MAX(FatherHID) FROM dbo.Family WHERE FatherHID.GetAncestor(1) = @FathersHID);
+	SET @FatherHID = @FathersHID.GetDescendant(@FathersLastChildHID, NULL);
+	SET @FatherNodeID = (SELECT $node_id FROM dbo.Family WHERE ID = @FatherID);
 END
 
 IF @MotherID IS NULL
 BEGIN
-  SET @MotherPath = '.' + CAST(@ID AS VARCHAR(10)) + '.';
-  SET @MotherHID = hierarchyid::GetRoot().GetDescendant((select MAX(MotherHID) from dbo.Family where MotherHID.GetAncestor(1) = hierarchyid::GetRoot()), NULL);
+	SET @MotherPath = '.' + CAST(@ID AS VARCHAR(10)) + '.';
+	SET @MotherHID = hierarchyid::GetRoot().GetDescendant((select MAX(MotherHID) from dbo.Family where MotherHID.GetAncestor(1) = hierarchyid::GetRoot()), NULL);
 END
 ELSE
 BEGIN
-  SET @MothersHID = (SELECT MotherHID FROM dbo.Family WITH (UPDLOCK) WHERE ID = @MotherID);
-  SET @MothersLastChildHID = (SELECT MAX(MotherHID) FROM dbo.Family WHERE MotherHID.GetAncestor(1) = @MothersHID);
-  SET @MotherHID = @MothersHID.GetDescendant(@MothersLastChildHID, NULL);
-  SET @MotherNodeID = (SELECT $node_id FROM dbo.Family WHERE ID = @MotherID);
+	SET @MothersHID = (SELECT MotherHID FROM dbo.Family WITH (UPDLOCK) WHERE ID = @MotherID);
+	SET @MothersLastChildHID = (SELECT MAX(MotherHID) FROM dbo.Family WHERE MotherHID.GetAncestor(1) = @MothersHID);
+	SET @MotherHID = @MothersHID.GetDescendant(@MothersLastChildHID, NULL);
+	SET @MotherNodeID = (SELECT $node_id FROM dbo.Family WHERE ID = @MotherID);
 END
--- Handle case where the new person has no ascendant (root)
-IF @FatherID IS NULL and @MotherID IS NULL
-  INSERT INTO dbo.Family(ID, FirstName, LastName, Titles, Sex, FatherID, MotherID, FatherLvl, MotherLvl, FatherPath, MotherPath, FatherHID, MotherHID)
-    VALUES(@ID, @Firstname, @LastName, @Titles, @Sex, @FatherID, @MotherID, 
-      0, 0, '.' + CAST(@ID AS VARCHAR(10)) + '.', '.' + CAST(@ID AS VARCHAR(10)) + '.',
-	  @FatherHID, @MotherHID);
--- Handle descendants case (non-root)
-ELSE
-  INSERT INTO dbo.Family(ID, FirstName, LastName, Titles, Sex, FatherID, MotherID, FatherLvl, MotherLvl, FatherPath, MotherPath, FatherHID, MotherHID)
-  SELECT @ID, @Firstname, @LastName, @Titles, @Sex, @FatherID, @MotherID, 
+
+INSERT INTO dbo.Family(ID, FirstName, LastName, Titles, Sex, FatherID, MotherID, FatherLvl, MotherLvl, FatherPath, MotherPath, FatherHID, MotherHID)
+SELECT @ID, @Firstname, @LastName, @Titles, @Sex, @FatherID, @MotherID, 
 	MAX(ISNULL(x.FatherLvl, 0)), 
 	MAX(ISNULL(x.MotherLvl, 0)), 
 	ISNULL(@FatherPath, MAX(ISNULL(x.FatherPath, '.'))), 
 	ISNULL(@MotherPath, MAX(ISNULL(x.MotherPath, '.'))), 
 	@FatherHID, @MotherHID
-  FROM (
-    SELECT FatherLvl + 1 FatherLvl, null MotherLvl, FatherPath + CAST(@ID AS VARCHAR(10)) + '.' FatherPath, null MotherPath
-    FROM dbo.Family
-    WHERE ID = @FatherID
+FROM (
+	SELECT FatherLvl + 1 FatherLvl, null MotherLvl, FatherPath + CAST(@ID AS VARCHAR(10)) + '.' FatherPath, null MotherPath
+	FROM dbo.Family
+	WHERE ID = @FatherID
 	UNION ALL
-    SELECT null FatherLvl, MotherLvl + 1 MotherLvl, null FatherPath, MotherPath + CAST(@ID AS VARCHAR(10)) + '.' MotherPath
-    FROM dbo.Family
-    WHERE ID = @MotherID
+	SELECT null FatherLvl, MotherLvl + 1 MotherLvl, null FatherPath, MotherPath + CAST(@ID AS VARCHAR(10)) + '.' MotherPath
+	FROM dbo.Family
+	WHERE ID = @MotherID
 	) x;
 
-	SET @ChildNodeID = (SELECT $node_id FROM dbo.Family WHERE ID = @ID);
-
-	IF @FatherNodeID IS NOT NULL
-		INSERT INTO dbo.IsFather VALUES(@FatherNodeID, @ChildNodeID)
-	IF @MotherNodeID IS NOT NULL
-		INSERT INTO dbo.IsMother VALUES(@MotherNodeID, @ChildNodeID)
-
-----Graph
---IF @FatherID IS NULL
---BEGIN
---  SET @FathersNodeID = NULL;
---END
---ELSE
---BEGIN
---  SET @FathersNodeID = (SELECT $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @FatherID);
---END
-
---IF @MotherID IS NULL
---BEGIN
---  SET @MothersNodeID = NULL;
---END
---ELSE
---BEGIN
---  SET @MothersNodeID = (SELECT $node_id FROM dbo.Family WITH (UPDLOCK) WHERE ID = @MotherID);
---END
----- Insert new child
---IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Family WHERE ID=@ID)
---	INSERT INTO dbo.Family(ID, FirstName, LastName, Titles, Sex)
---	VALUES(@ID, @Firstname, @LastName, @Titles, @Sex);
---SET @MyNodeID = (SELECT $node_id FROM dbo.Family WHERE ID=@ID);
-----print 'MyNodeID'
-----print @MyNodeID
---IF @FathersNodeID IS NOT NULL
---BEGIN
---  --print '@FathersNodeID'
---  --print @FathersNodeID
---  INSERT INTO dbo.isFather ($from_id, $to_id) VALUES(@FathersNodeID, @MyNodeID)
---END
---IF @MothersNodeID IS NOT NULL
---BEGIN
---  --print '@MothersNodeID'
---  --print @MothersNodeID
---  INSERT INTO dbo.isMother ($from_id, $to_id) VALUES(@MothersNodeID, @MyNodeID)
---END
-
+--Graph
+SET @NodeID = (SELECT $node_id FROM dbo.Family WHERE ID = @ID);
+IF @FatherNodeID IS NOT NULL
+	INSERT INTO dbo.IsFather VALUES(@FatherNodeID, @NodeID)
+IF @MotherNodeID IS NOT NULL
+	INSERT INTO dbo.IsMother VALUES(@MotherNodeID, @NodeID)
 
 COMMIT;
 

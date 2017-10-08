@@ -30,31 +30,44 @@ go
 IF OBJECT_ID(N'dbo.Family', N'U') IS NOT NULL DROP TABLE dbo.Family;
 GO
 CREATE TABLE dbo.Family (
+	--PK
 	ID			int NOT NULL,
+	--Attributes
 	FirstName	varchar(50),
 	LastName	varchar(50),
 	Titles		varchar(255),
 	Sex			char(1),
+	--self-join
 	FatherID	int,
 	MotherID	int,
+	--materialized path
 	FatherLvl	int,
 	MotherLvl	int,
 	FatherPath	varchar(255),
 	MotherPath	varchar(255),
+	--hierarchyid
 	FatherHID	hierarchyid,
 	MotherHID	hierarchyid,
+	--CHECK
 	CHECK (ID <> FatherID), --no one can be his own father
 	CHECK (ID <> MotherID)  --no one can be his own mother
-)
+	--,CHECK((SELECT COUNT(*) FROM dbo.Family)-1 =(SELECT COUNT(FatherID) FROM dbo.Family)
+	--,CHECK(SELECT(COUNT(*) FROM dbo.Family WHERE FatherID IS NULL) = 1)
+) ;
 GO
---depth-first & breadth-first indexes
-CREATE UNIQUE CLUSTERED INDEX idx_Family_depth_first_Father ON dbo.Family(FatherPath);
+--primary key
+ALTER TABLE dbo.Family ADD CONSTRAINT PK_Family PRIMARY KEY NONCLUSTERED(ID);
+--self-join
+CREATE UNIQUE INDEX idx_Family_FatherID_ID ON dbo.Family(FatherID, ID);
+CREATE UNIQUE INDEX idx_Family_MotherID_ID ON dbo.Family(MotherID, ID);
+--materialized path
+CREATE UNIQUE INDEX idx_Family_depth_first_Father ON dbo.Family(FatherPath);
 CREATE UNIQUE INDEX idx_Family_depth_first_Mother ON dbo.Family(MotherPath);
 CREATE UNIQUE INDEX idx_Family_breadth_first_Father ON dbo.Family(FatherLvl, FatherPath);
 CREATE UNIQUE INDEX idx_Family_breadth_first_Mother ON dbo.Family(MotherLvl, MotherPath);
-ALTER TABLE dbo.Family 
-	ADD CONSTRAINT PK_Family 
-		PRIMARY KEY NONCLUSTERED(ID);
+--hierarchyid
+CREATE UNIQUE INDEX idx_Family_FatherHID ON dbo.Family(FatherHID);
+CREATE UNIQUE INDEX idx_Family_MotherHID ON dbo.Family(MotherHID);
 
 IF OBJECT_ID(N'dbo.AddFamily', N'P') IS NOT NULL DROP PROC dbo.AddFamily;
 GO

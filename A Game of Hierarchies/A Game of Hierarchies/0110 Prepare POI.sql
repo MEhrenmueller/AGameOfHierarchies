@@ -121,7 +121,6 @@ IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.POI WHERE POIName=@POIName)
 	INSERT INTO dbo.POI (POIName, RegionName, ContinentName, WorldName, RegionID, ContinentID, WorldID)
 	VALUES	(@POIName, @RegionName, @ContinentName, @WorldName, @RegionID, @ContinentID, @WorldID)
 
-
 END
 GO
 

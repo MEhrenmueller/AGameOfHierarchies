@@ -27,14 +27,13 @@ SOFTWARE.
 use [AGameOfHierarchies]
 go
 
+--truncate table dbo.Family
+
 -- Make it easier to insert rows in any order
 ALTER TABLE dbo.Family
   DROP CONSTRAINT IF EXISTS FK_Family_Father;
 ALTER TABLE dbo.Family
   DROP CONSTRAINT IF EXISTS FK_Family_Mother;
-
-select * from dbo.Family
-select * from dbo.isFather
 
 -- STARK
 exec dbo.AddFamily
@@ -214,7 +213,7 @@ exec dbo.AddFamily
 @FirstName	= 'Minisa',
 @LastName	= 'Whent',
 @Titles		= '',
-@Sex		= 'M',
+@Sex		= 'F',
 @FatherID	= null,
 @MotherID	= null
 --
@@ -290,6 +289,16 @@ exec dbo.AddFamily
 @Sex		= 'M',
 @FatherID	= 116,
 @MotherID	= null
+
+----2017-09-22
+--exec dbo.AddFamily
+--@ID			= 125,
+--@FirstName	= 'Lyanna',
+--@LastName	= 'Stark',
+--@Titles		= '',
+--@Sex		= 'F',
+--@FatherID	= 114,
+--@MotherID	= 115
 
 
 --reinforce constraints
@@ -405,3 +414,6 @@ exec dbo.AddFamilyEdge
 
 
 */
+
+--select * from dbo.Family
+--select * from dbo.isFather
